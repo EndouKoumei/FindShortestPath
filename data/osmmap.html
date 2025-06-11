@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Simple Map (OSM + Leaflet)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const SERVER_URL = "http://localhost:5000";
+
+    const map = L.map('map').fitBounds([
+      [21.008046, 105.8411817],
+      [21.0291808, 105.8584719]
+    ]);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let clickCount = 0;
+    let source = null;
+    let dest = null;
+    let markers = [];
+
+    map.on('click', function (e) {
+      const latlng = e.latlng;
+
+      if (clickCount === 0) {
+        source = latlng;
+        const marker = L.marker(latlng).addTo(map)
+          .bindPopup("Source").openPopup();
+        markers.push(marker);
+        clickCount++;
+      } else if (clickCount === 1) {
+        dest = latlng;
+        const marker = L.marker(latlng).addTo(map)
+          .bindPopup("Destination").openPopup();
+        markers.push(marker);
+        clickCount++;
+
+        // Gọi API sau khi chọn đủ 2 điểm
+        const query = `${source.lat},${source.lng},${dest.lat},${dest.lng}`;
+        const REST_API = `${SERVER_URL}/calculate?pntdata=${query}`;
+        console.log("Calling API:", REST_API);
+
+        fetch(REST_API)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("API failed");
+            }
+            return response.json();
+          })
+          .then(data => {
+            const polyline = L.polyline(data, { color: 'blue' }).addTo(map);
+            map.fitBounds(polyline.getBounds());
+          })
+          .catch(err => {
+            console.error("API error:", err);
+            alert("Lỗi khi gọi server hoặc định dạng phản hồi không hợp lệ.");
+          });
+      } else {
+        // Reset nếu click lần thứ 3 trở đi
+        markers.forEach(m => map.removeLayer(m));
+        source = null;
+        dest = null;
+        clickCount = 0;
+        markers = [];
+      }
+    });
+  </script>
+</body>
+</html>
