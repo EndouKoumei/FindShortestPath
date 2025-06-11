@@ -5,7 +5,7 @@
 * Description about data:
   * Data provided by OSM is in __.osm__ format, which is nothing but the XML file.
   * Converted this file to lighter XML _(.graphml)_ file, which can be parsed easily as compared to .osm. [Code](https://github.com/lnvanhuy/FindShortestPath/blob/main/data/transMapgraphml.py) 
-  * Used OSMNX for this [OSMNX Documentation] (https://osmnx.readthedocs.io/en/stable/osmnx.html#osmnx.core.graph_from_file) <br>
+  * Used OSMNX for this [OSMNX Documentation](https://osmnx.readthedocs.io/en/stable/osmnx.html#osmnx.core.graph_from_file)
 
 ## 2. Algorithm: A*
 
