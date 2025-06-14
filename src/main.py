@@ -3,10 +3,11 @@ import time
 import numpy as np
 from sklearn.neighbors import KDTree
 from haversine import haversine
+import os
 
 s = time.time()
 doc = {}
-path = r"C:\Users\lnvanhuy\PycharmProjects\FindShortestWay\data\map.graphml"
+path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "map.graphml")
 with open(path , encoding='utf-8') as fd:
     doc = xmltodict.parse(fd.read())
 print(time.time() - s)
