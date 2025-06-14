@@ -66,8 +66,9 @@
             return response.json();
           })
           .then(data => {
-            const polyline = L.polyline(data, { color: 'blue' }).addTo(map);
+            const polyline = L.polyline(data.path, { color: 'blue' }).addTo(map);
             map.fitBounds(polyline.getBounds());
+            alert(`Path length: ${data.cost} km\nTime taken: ${data.execution_time.toFixed(3)} seconds`);
           })
           .catch(err => {
             console.error("API error:", err);
